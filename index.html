@@ -30,7 +30,7 @@
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
-    document.addEventListener("touchstart", () => {
+    document.addEventListener("mousedown", () => {
         if (!running) {
             start();
         } else {
@@ -39,12 +39,13 @@
     });
 
     function start() {
+        running = true;
         left.classList.add("on");
-
         flasher = setInterval(toggle, 500);
     }
 
     function stop() {
+        running = false;
         clearInterval(flasher);
         flasher = null;
         right.classList.remove("on");
