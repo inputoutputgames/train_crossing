@@ -30,45 +30,16 @@
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
-    let flasher = null;
-    let loaded = false;
-    let audioCtx = null;
-    let audioBuffer = null;
-    let sourceNode = null;
-    const AUDIO_FILE_PATH = "bell.mp3";
-
-    document.addEventListener("click", async (e) => {
-        document.body.innerHTML = "Dude...";
-
-        if (!loaded) {
-            await loadAudio();
-            loaded = true;
-        }
-
+    document.addEventListener("touchstart", () => {
         if (!running) {
             start();
         } else {
             stop();
         }
-
-        running = !running;
     });
 
-    function toggle() {
-        if (!running) return;
-
-        if (left.classList.contains("on")) {
-            right.classList.add("on");
-            left.classList.remove("on");
-        } else {
-            right.classList.remove("on");
-            left.classList.add("on");
-        }
-    }
-
-    async function start() {
+    function start() {
         left.classList.add("on");
-        await startAudio();
 
         flasher = setInterval(toggle, 500);
     }
@@ -78,63 +49,111 @@
         flasher = null;
         right.classList.remove("on");
         left.classList.remove("on");
-        stopAudio();
     }
 
-    async function loadAudio() {
-        try {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
+    // let flasher = null;
+    // let loaded = false;
+    // let audioCtx = null;
+    // let audioBuffer = null;
+    // let sourceNode = null;
+    // const AUDIO_FILE_PATH = "bell.mp3";
 
-            const response = await fetch(AUDIO_FILE_PATH);
-            const arrayBuffer = await response.arrayBuffer();
+    // document.addEventListener("click", async (e) => {
+    //     if (!loaded) {
+    //         await loadAudio();
+    //         loaded = true;
+    //     }
 
-            audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        } catch (error) {
-            console.error("Failed to load audio loop:", error);
-        }
-    }
+    //     if (!running) {
+    //         start();
+    //     } else {
+    //         stop();
+    //     }
 
-    async function startAudio() {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
+    //     running = !running;
+    // });
 
-        if (audioCtx.state === 'suspended') {
-            await audioCtx.resume();
-        }
+    // function toggle() {
+    //     if (!running) return;
 
-        if (!audioBuffer) {
-            console.warn("Audio wasn't loaded. Fetching now...");
-            await loadAudio();
-        }
+    //     if (left.classList.contains("on")) {
+    //         right.classList.add("on");
+    //         left.classList.remove("on");
+    //     } else {
+    //         right.classList.remove("on");
+    //         left.classList.add("on");
+    //     }
+    // }
 
-        if (sourceNode) {
-            stopAudio();
-        }
+    // async function start() {
+    //     left.classList.add("on");
+    //     await startAudio();
 
-        if (audioBuffer) {
-            sourceNode = audioCtx.createBufferSource();
-            sourceNode.buffer = audioBuffer;
-            sourceNode.loop = true;
-            sourceNode.connect(audioCtx.destination);
-            sourceNode.start(0);
-        }
-    }
+    //     flasher = setInterval(toggle, 500);
+    // }
 
-    function stopAudio() {
-        if (sourceNode) {
-            try {
-                sourceNode.stop();
-            } catch (err) {
-                console.error("Error stopping.", err);
-            }
+    // function stop() {
+    //     clearInterval(flasher);
+    //     flasher = null;
+    //     right.classList.remove("on");
+    //     left.classList.remove("on");
+    //     stopAudio();
+    // }
 
-            sourceNode.disconnect();
-            sourceNode = null;
-        }
-    }
+    // async function loadAudio() {
+    //     try {
+    //         if (!audioCtx) {
+    //             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    //         }
+
+    //         const response = await fetch(AUDIO_FILE_PATH);
+    //         const arrayBuffer = await response.arrayBuffer();
+
+    //         audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    //     } catch (error) {
+    //         console.error("Failed to load audio loop:", error);
+    //     }
+    // }
+
+    // async function startAudio() {
+    //     if (!audioCtx) {
+    //         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    //     }
+
+    //     if (audioCtx.state === 'suspended') {
+    //         await audioCtx.resume();
+    //     }
+
+    //     if (!audioBuffer) {
+    //         console.warn("Audio wasn't loaded. Fetching now...");
+    //         await loadAudio();
+    //     }
+
+    //     if (sourceNode) {
+    //         stopAudio();
+    //     }
+
+    //     if (audioBuffer) {
+    //         sourceNode = audioCtx.createBufferSource();
+    //         sourceNode.buffer = audioBuffer;
+    //         sourceNode.loop = true;
+    //         sourceNode.connect(audioCtx.destination);
+    //         sourceNode.start(0);
+    //     }
+    // }
+
+    // function stopAudio() {
+    //     if (sourceNode) {
+    //         try {
+    //             sourceNode.stop();
+    //         } catch (err) {
+    //             console.error("Error stopping.", err);
+    //         }
+
+    //         sourceNode.disconnect();
+    //         sourceNode = null;
+    //     }
+    // }
 </script>
 
 </html>
