@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traing Crossing</title>
+    <title>Train Crossing</title>
     <style>
         body {
             display: flex;
@@ -32,8 +32,17 @@
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
-    document.body.addEventListener("click", () =>{
-        if(!running) {
+    let audioCtx = null;
+    let audioBuffer = null;
+    let sourceNode = null;
+    const AUDIO_FILE_PATH = "bell.mp3";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        await preloadLoopingAudio();
+    });
+
+    document.body.addEventListener("click", () => {
+        if (!running) {
             start();
         } else {
             stop();
@@ -43,8 +52,8 @@
     });
 
     function toggle() {
-        if(!running) return;
-        
+        if (!running) return;
+
         if (left.classList.contains("on")) {
             right.classList.add("on");
             left.classList.remove("on");
@@ -56,14 +65,74 @@
         }
     }
 
-    function start() {
+    async function start() {
         left.classList.add("on");
+
+        await startAudio();
+
         setInterval(toggle, 500);
     }
 
     function stop() {
         right.classList.remove("on");
         left.classList.remove("on");
+        stopAudio();
+    }
+
+    async function preloadLoopingAudio() {
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            const response = await fetch(AUDIO_FILE_PATH);
+            const arrayBuffer = await response.arrayBuffer();
+
+            audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        } catch (error) {
+            console.error("Failed to preload audio loop:", error);
+        }
+    }
+
+    async function startAudio() {
+        if (!audioCtx) {
+            audioCtx = new window.AudioContext || window.webkitAudioContext();
+        }
+
+        if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+        }
+
+        if (!audioBuffer) {
+            console.warn("Audio wasn't preloaded. Fetching now...");
+            await preloadLoopingAudio();
+        }
+
+        if (sourceNode) {
+            stopLoopingAudio();
+        }
+
+        if (audioBuffer) {
+            sourceNode = audioCtx.createBufferSource();
+            sourceNode.buffer = audioBuffer;
+            sourceNode.loop = true;
+            sourceNode.connect(audioCtx.destination);
+            sourceNode.start(0);
+            console.log("Seamless loop started.")
+        }
+    }
+
+    function stopAudio() {
+        if (sourceNode) {
+            try {
+                sourceNode.stop();
+            } catch (err) {
+                console.error("Error stopping.", err);
+            }
+
+            sourceNode.disconnect();
+            sourceNode = null;
+        }
     }
 </script>
 
