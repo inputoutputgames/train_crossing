@@ -29,13 +29,21 @@
 </body>
 <script>
     let running = false;
+    let flasher = null;
+
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
+    const sound = new Audio("bell.mp3");
+    sound.loop = true;
+
     document.addEventListener("click", () => {
         if (!running) {
+            sound.play();
             start();
         } else {
+            sound.pause();
+            sound.currentTime = 0;
             stop();
         }
     });
