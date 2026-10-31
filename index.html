@@ -41,13 +41,14 @@
         await preloadLoopingAudio();
     });
 
-    document.body.addEventListener("click", () => {
+    window.addEventListener("click", (e) => {
         if (!running) {
             start();
         } else {
             stop();
         }
 
+        console.log(e.target);
         running = !running;
     });
 
