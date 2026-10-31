@@ -38,6 +38,8 @@
     const AUDIO_FILE_PATH = "bell.mp3";
 
     document.addEventListener("click", async (e) => {
+        document.body.innerHTML = "Dude...";
+
         if (!loaded) {
             await loadAudio();
             loaded = true;
