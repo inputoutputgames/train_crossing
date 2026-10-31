@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@
         }
     </style>
 </head>
+
 <body>
     <div id="left"></div>
     <div id="right"></div>
@@ -31,6 +33,14 @@
     const right = document.getElementById("right");
 
     document.addEventListener("mousedown", () => {
+        if (!running) {
+            start();
+        } else {
+            stop();
+        }
+    });
+
+    document.addEventListener("touchstart", () => {
         if (!running) {
             start();
         } else {
