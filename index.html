@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +21,6 @@
         }
     </style>
 </head>
-
 <body>
     <div id="left"></div>
     <div id="right"></div>
@@ -32,16 +30,19 @@
     const left = document.getElementById("left");
     const right = document.getElementById("right");
 
+    let flasher = null;
+    let loaded = false;
     let audioCtx = null;
     let audioBuffer = null;
     let sourceNode = null;
     const AUDIO_FILE_PATH = "bell.mp3";
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        await preloadLoopingAudio();
-    });
+    document.addEventListener("click", async (e) => {
+        if (!loaded) {
+            await loadAudio();
+            loaded = true;
+        }
 
-    document.addEventListener("click", (e) => {
         if (!running) {
             start();
         } else {
@@ -65,19 +66,20 @@
 
     async function start() {
         left.classList.add("on");
-
         await startAudio();
 
-        setInterval(toggle, 500);
+        flasher = setInterval(toggle, 500);
     }
 
     function stop() {
+        clearInterval(flasher);
+        flasher = null;
         right.classList.remove("on");
         left.classList.remove("on");
         stopAudio();
     }
 
-    async function preloadLoopingAudio() {
+    async function loadAudio() {
         try {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -88,13 +90,13 @@
 
             audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
         } catch (error) {
-            console.error("Failed to preload audio loop:", error);
+            console.error("Failed to load audio loop:", error);
         }
     }
 
     async function startAudio() {
         if (!audioCtx) {
-            audioCtx = new window.AudioContext || window.webkitAudioContext();
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
 
         if (audioCtx.state === 'suspended') {
@@ -102,12 +104,12 @@
         }
 
         if (!audioBuffer) {
-            console.warn("Audio wasn't preloaded. Fetching now...");
-            await preloadLoopingAudio();
+            console.warn("Audio wasn't loaded. Fetching now...");
+            await loadAudio();
         }
 
         if (sourceNode) {
-            stopLoopingAudio();
+            stopAudio();
         }
 
         if (audioBuffer) {
