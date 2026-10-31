@@ -41,14 +41,13 @@
         await preloadLoopingAudio();
     });
 
-    window.addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
         if (!running) {
             start();
         } else {
             stop();
         }
 
-        console.log(e.target);
         running = !running;
     });
 
@@ -58,11 +57,9 @@
         if (left.classList.contains("on")) {
             right.classList.add("on");
             left.classList.remove("on");
-            console.log("toggle called: left to right");
         } else {
             right.classList.remove("on");
             left.classList.add("on");
-            console.log("toggle called: left to right");
         }
     }
 
@@ -119,7 +116,6 @@
             sourceNode.loop = true;
             sourceNode.connect(audioCtx.destination);
             sourceNode.start(0);
-            console.log("Seamless loop started.")
         }
     }
 
